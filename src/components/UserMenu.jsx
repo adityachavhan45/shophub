@@ -7,14 +7,12 @@ const UserMenu = ({ user, onLogout }) => {
   const dropdownRef = useRef(null);
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
@@ -28,12 +26,8 @@ const UserMenu = ({ user, onLogout }) => {
   return (
     <div className="user-menu" ref={dropdownRef}>
       {user ? (
-        // Logged in state
         <>
-          <button
-            className="user-menu-button"
-            onClick={() => setIsOpen(!isOpen)}
-          >
+          <button className="user-menu-button" onClick={() => setIsOpen(!isOpen)}>
             <div className="user-avatar">
               {user.name.charAt(0).toUpperCase()}
             </div>
@@ -71,7 +65,6 @@ const UserMenu = ({ user, onLogout }) => {
           )}
         </>
       ) : (
-        // Logged out state
         <div className="auth-buttons">
           <Link to="/login" className="auth-button login">Login</Link>
           <Link to="/register" className="auth-button register">Register</Link>

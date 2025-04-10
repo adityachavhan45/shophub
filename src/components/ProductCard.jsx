@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { cartService } from '../services/storage';
+
 import CustomAlert from './CustomAlert';
 import './ProductCard.css';
 
@@ -13,31 +13,24 @@ const ProductCard = ({ product, onAddToCart, user }) => {
   const [showCartAlert, setShowCartAlert] = useState(false);
   const [cartAlertMessage, setCartAlertMessage] = useState('');
 
-  const handleImageLoad = () => {
-    setImageLoaded(true);
-  };
+  const handleImageLoad = () => setImageLoaded(true);
 
   const formatPrice = (price) => {
-    // Convert USD to INR (approximate rate: 1 USD = 83 INR)
     const priceInRupees = price * 83;
     return `₹${priceInRupees.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')}`;
   };
 
-  const renderRatingStars = (rating) => {
-    return (
-      <div className="rating-stars">
-        {[...Array(5)].map((_, index) => (
-          <span key={index} className="star">
-            {index < rating ? '★' : '☆'}
-          </span>
-        ))}
-      </div>
-    );
-  };
+  const renderRatingStars = (rating) => (
+    <div className="rating-stars">
+      {[...Array(5)].map((_, index) => (
+        <span key={index} className="star">
+          {index < rating ? '★' : '☆'}
+        </span>
+      ))}
+    </div>
+  );
 
-  const toggleWishlist = () => {
-    setIsWishlisted(!isWishlisted);
-  };
+  const toggleWishlist = () => setIsWishlisted(!isWishlisted);
 
   const handleAddToCart = async () => {
     if (!user) {
@@ -49,22 +42,25 @@ const ProductCard = ({ product, onAddToCart, user }) => {
     try {
       const currentCart = await cartService.getCart(user.id);
       const existingItem = currentCart.items.find(item => item.productId === product.id);
-      
+
       let updatedItems;
       if (existingItem) {
-        updatedItems = currentCart.items.map(item => 
-          item.productId === product.id 
+        updatedItems = currentCart.items.map(item =>
+          item.productId === product.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
       } else {
-        updatedItems = [...currentCart.items, {
-          productId: product.id,
-          name: product.name,
-          price: product.price,
-          image: product.image,
-          quantity: 1
-        }];
+        updatedItems = [
+          ...currentCart.items,
+          {
+            productId: product.id,
+            name: product.name,
+            price: product.price,
+            image: product.image,
+            quantity: 1,
+          },
+        ];
       }
 
       const result = await cartService.updateCart(user.id, updatedItems);
@@ -87,22 +83,19 @@ const ProductCard = ({ product, onAddToCart, user }) => {
 
   const handleViewCart = () => {
     setShowCartAlert(false);
-    // Navigate to cart page
     navigate('/cart');
   };
 
   return (
     <>
       <div className="product-card">
-        {product.badge && (
-          <div className="product-badge">{product.badge}</div>
-        )}
+        {product.badge && <div className="product-badge">{product.badge}</div>}
 
         <div className="quick-actions">
-          <button 
+          <button
             className="quick-action-btn"
             onClick={toggleWishlist}
-            title={isWishlisted ? "Remove from Wishlist" : "Add to Wishlist"}
+            title={isWishlisted ? 'Remove from Wishlist' : 'Add to Wishlist'}
           >
             {isWishlisted ? '❤️' : '🤍'}
           </button>
@@ -130,7 +123,7 @@ const ProductCard = ({ product, onAddToCart, user }) => {
           </div>
         </div>
 
-        <button 
+        <button
           className={`add-to-cart ${addingToCart ? 'loading' : ''}`}
           onClick={handleAddToCart}
           disabled={addingToCart}

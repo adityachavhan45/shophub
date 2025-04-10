@@ -3,7 +3,6 @@ import ProductCard from './ProductCard';
 import './ProductGrid.css';
 
 const ProductGrid = ({ products, onAddToCart, user }) => {
-  // Group products by category
   const productsByCategory = products.reduce((acc, product) => {
     const category = product.category || 'Other';
     if (!acc[category]) {
@@ -20,9 +19,9 @@ const ProductGrid = ({ products, onAddToCart, user }) => {
           <h2 className="category-title">{category}</h2>
           <div className="product-grid">
             {categoryProducts.map((product) => (
-              <ProductCard 
-                key={product.id} 
-                product={product} 
+              <ProductCard
+                key={product.id}
+                product={product}
                 onAddToCart={onAddToCart}
                 user={user}
               />

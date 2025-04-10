@@ -7,7 +7,7 @@ import Register from './components/auth/Register'
 import Footer from './components/Footer'
 import ImageSlider from './components/ImageSlider';
 import Cart from './pages/Cart';
-import { userService, cartService } from './services/storage'
+
 
 import './App.css'
 
