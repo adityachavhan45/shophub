@@ -42,7 +42,7 @@ const Login = ({ onLogin }) => {
       setError(err.message);
     }
   };
-
+//the page is render from this
   return (
     <div className="auth-container">
       <div className="auth-box">
