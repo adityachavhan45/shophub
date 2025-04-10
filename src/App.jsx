@@ -1,35 +1,33 @@
-import { useState, useMemo, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom'
-import Navbar from './components/Navbar'
-import ProductGrid from './components/ProductGrid'
-import Login from './components/auth/Login'
-import Register from './components/auth/Register'
-import Footer from './components/Footer'
+// src/App.js
+import { useState, useMemo } from 'react';
+import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import ProductGrid from './components/ProductGrid';
+import Login from './components/auth/Login';
+import Register from './components/auth/Register';
+import Footer from './components/Footer';
 import ImageSlider from './components/ImageSlider';
 import Cart from './pages/Cart';
 
+import './App.css';
 
-import './App.css'
+// Home page component
+const HomePage = ({ products, searchTerm, onAddToCart, user }) => (
+  <>
+    <ImageSlider />
+    <div className="product-grid-container">
+      {searchTerm && (
+        <div className="search-results-header">
+          <h2>Search Results for "{searchTerm}"</h2>
+          <p>{products.length} products found</p>
+        </div>
+      )}
+      <ProductGrid products={products} onAddToCart={onAddToCart} user={user} />
+    </div>
+  </>
+);
 
-// Separate component for the home page
-const HomePage = ({ products, searchTerm, onAddToCart, user }) => {
-  return (
-    <>
-      <ImageSlider />
-      <div className="product-grid-container">
-        {searchTerm && (
-          <div className="search-results-header">
-            <h2>Search Results for "{searchTerm}"</h2>
-            <p>{products.length} products found</p>
-          </div>
-        )}
-        <ProductGrid products={products} onAddToCart={onAddToCart} user={user} />
-      </div>
-    </>
-  );
-};
-
-// Category page component
+// Category page
 const CategoryPage = ({ products, onAddToCart, user }) => {
   const { categoryName } = useParams();
   const categoryProducts = products.filter(
@@ -39,44 +37,18 @@ const CategoryPage = ({ products, onAddToCart, user }) => {
   return (
     <div className="product-grid-container">
       <h1 className="category-header">{categoryName}</h1>
-      <ProductGrid
-        products={categoryProducts}
-        onAddToCart={onAddToCart}
-        user={user}
-      />
+      <ProductGrid products={categoryProducts} onAddToCart={onAddToCart} user={user} />
     </div>
   );
 };
 
 function App() {
-  const [cartCount, setCartCount] = useState(0)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [user, setUser] = useState(null)
-  const [cartItems, setCartItems] = useState([])
+  const [cartCount, setCartCount] = useState(0);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [user, setUser] = useState(null);
+  const [cartItems, setCartItems] = useState([]);
 
-  // Load user data and cart from localStorage on app start
-  useEffect(() => {
-    const savedUserId = localStorage.getItem('currentUserId');
-    if (savedUserId) {
-      const userData = userService.getUserById(parseInt(savedUserId));
-      if (userData) {
-        setUser(userData);
-        try {
-          const userCart = cartService.getCart(userData.id);
-          if (userCart && userCart.items) {
-            setCartItems(userCart.items);
-            setCartCount(userCart.items.reduce((total, item) => total + item.quantity, 0));
-          }
-        } catch (error) {
-          console.error('Error loading cart:', error);
-        }
-      }
-    }
-  }, []);
-
-  // Sample product data with real image URLs
   const products = [
-    // T-Shirt Types
     {
       id: 1,
       name: "Oversized Cotton T-Shirt",
@@ -167,7 +139,7 @@ function App() {
       category: "T-Shirt Types",
       image: "https://cdn.shopify.com/s/files/1/0016/0074/9623/products/womens-crop-top-tee_720x.jpg"
     },
-  
+    
     // Comic-Based Themes
     {
       id: 11,
@@ -232,43 +204,28 @@ function App() {
       category: "Comic-Based Themes",
       image: "https://m.media-amazon.com/images/I/71c0A1T1pFL._AC_UX679_.jpg"
     }
-  ];
-  
+    ];
+    
 
-  // Filter products based on search term
   const filteredProducts = useMemo(() => {
     if (!searchTerm) return products;
-
-    const searchLower = searchTerm.toLowerCase();
+    const lower = searchTerm.toLowerCase();
     return products.filter(product =>
-      product.name.toLowerCase().includes(searchLower) ||
-      product.category.toLowerCase().includes(searchLower)
+      product.name.toLowerCase().includes(lower) ||
+      product.category.toLowerCase().includes(lower)
     );
   }, [products, searchTerm]);
 
-  const handleSearch = (term) => {
-    setSearchTerm(term);
-  };
+  const handleSearch = (term) => setSearchTerm(term);
 
   const handleLogin = (userData) => {
     setUser(userData);
-    localStorage.setItem('currentUserId', userData.id.toString());
-    try {
-      const userCart = cartService.getCart(userData.id);
-      if (userCart && userCart.items) {
-        setCartItems(userCart.items);
-        setCartCount(userCart.items.reduce((total, item) => total + item.quantity, 0));
-      }
-    } catch (error) {
-      console.error('Error loading cart after login:', error);
-    }
   };
 
   const handleLogout = () => {
     setUser(null);
     setCartItems([]);
     setCartCount(0);
-    localStorage.removeItem('currentUserId');
   };
 
   const handleAddToCart = (updatedCart) => {
@@ -291,42 +248,15 @@ function App() {
           <Routes>
             <Route
               path="/"
-              element={
-                <HomePage
-                  products={filteredProducts}
-                  searchTerm={searchTerm}
-                  onAddToCart={handleAddToCart}
-                  user={user}
-                />
-              }
+              element={<HomePage products={filteredProducts} searchTerm={searchTerm} onAddToCart={handleAddToCart} user={user} />}
             />
-            <Route
-              path="/login"
-              element={<Login onLogin={handleLogin} />}
-            />
-            <Route
-              path="/register"
-              element={<Register onRegister={handleLogin} />}
-            />
+            <Route path="/login" element={<Login onLogin={handleLogin} />} />
+            <Route path="/register" element={<Register />} />
             <Route
               path="/category/:categoryName"
-              element={
-                <CategoryPage
-                  products={filteredProducts}
-                  onAddToCart={handleAddToCart}
-                  user={user}
-                />
-              }
+              element={<CategoryPage products={filteredProducts} onAddToCart={handleAddToCart} user={user} />}
             />
-            <Route
-              path="/cart"
-              element={
-                <Cart
-                  user={user}
-                  onUpdateCart={handleAddToCart}
-                />
-              }
-            />
+            <Route path="/cart" element={<Cart user={user} onUpdateCart={handleAddToCart} />} />
           </Routes>
         </main>
         <Footer />

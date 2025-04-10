@@ -1,8 +1,9 @@
+// src/components/auth/Login.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Auth.css';
 
-const Login = () => {
+const Login = ({ onLogin }) => {
   const [formData, setFormData] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
@@ -37,15 +38,15 @@ const Login = () => {
         return;
       }
 
-      console.log('Response status:', res.status);
-      console.log('Response data:', data);
-
       if (!res.ok) {
         setError(data.message || `Login failed with status ${res.status}`);
         return;
       }
 
-      console.log('Logged in user:', data.user);
+      if (data.user && typeof onLogin === 'function') {
+        onLogin(data.user); // ✅ Set user in parent
+      }
+
       alert('Login successful!');
       navigate('/');
     } catch (err) {

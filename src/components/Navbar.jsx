@@ -25,6 +25,7 @@ const Navbar = ({ cartCount, onSearch, user, onLogout }) => {
           placeholder="Search products..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
+          className="search-input"
         />
         <button type="submit" className="search-button">Search</button>
       </form>
@@ -36,7 +37,13 @@ const Navbar = ({ cartCount, onSearch, user, onLogout }) => {
           <span className="cart-icon">🛒</span>
           {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
         </Link>
-        <UserMenu user={user} onLogout={onLogout} />
+
+        {/* ✅ Show UserMenu if user is logged in */}
+        {user ? (
+          <UserMenu user={user} onLogout={onLogout} />
+        ) : (
+          <Link to="/login" className="nav-link">Login</Link>
+        )}
       </div>
     </nav>
   );
