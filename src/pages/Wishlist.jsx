@@ -6,8 +6,7 @@ const Wishlist = ({ user, onAddToCart }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // In a real application, you would fetch the wishlist from the backend
-    // For now, we'll use mock data
+    
     const mockWishlist = [
       {
         id: 1,
