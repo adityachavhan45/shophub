@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import cartService from '../services/cartService';
 import CustomAlert from './CustomAlert';
 import './ProductCard.css';
 
