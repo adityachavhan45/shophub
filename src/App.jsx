@@ -12,6 +12,7 @@ import UserProfile from './pages/UserProfile';
 import Orders from './pages/Orders';
 import Wishlist from './pages/Wishlist';
 import Settings from './pages/Settings';
+import ScrollToTop from './components/ScrollToTop';
 
 // Import all images
 import oversizedTee from './Images/Oversized Cotton T-Shirt.webp';
@@ -292,6 +293,7 @@ function App() {
   return (
     <Router>
       <div className="app">
+        <ScrollToTop />
         <Navbar
           cartCount={cartCount}
           onSearch={handleSearch}
