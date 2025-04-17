@@ -43,8 +43,9 @@ const Login = ({ onLogin }) => {
         return;
       }
 
-      if (data.user && typeof onLogin === 'function') {
-        onLogin(data.user); // ✅ Set user in parent
+      if (data.user && data.token && typeof onLogin === 'function') {
+        // Pass both user and token to the parent component
+        onLogin({...data.user, token: data.token});
       }
 
       alert('Login successful!');

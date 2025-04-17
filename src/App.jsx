@@ -1,10 +1,12 @@
 // src/App.js
 import { useState, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, useParams } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, useParams, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ProductGrid from './components/ProductGrid';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
+import AdminLogin from './components/admin/AdminLogin';
+import Dashboard from './components/admin/Dashboard';
 import Footer from './components/Footer';
 import ImageSlider from './components/ImageSlider';
 import Cart from './pages/Cart';
@@ -71,6 +73,7 @@ function App() {
   const [searchTerm, setSearchTerm] = useState('');
   const [user, setUser] = useState(null);
   const [cartItems, setCartItems] = useState([]);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const products = [
     {
@@ -241,6 +244,7 @@ function App() {
 
   const handleLogin = (userData) => {
     setUser(userData);
+    setIsAdmin(userData.isAdmin || false);
   };
 
   const handleRegister = (userData) => {
@@ -251,6 +255,7 @@ function App() {
     setUser(null);
     setCartItems([]);
     setCartCount(0);
+    setIsAdmin(false);
   };
 
   const updateCartCount = (items) => {
@@ -290,6 +295,14 @@ function App() {
     updateCartCount(updatedItems);
   };
 
+  // Protected Route component for admin routes
+  const AdminRoute = ({ children }) => {
+    if (!user || !isAdmin) {
+      return <Navigate to="/admin/login" />;
+    }
+    return children;
+  };
+
   return (
     <Router>
       <div className="app">
@@ -299,6 +312,7 @@ function App() {
           onSearch={handleSearch}
           user={user}
           onLogout={handleLogout}
+          isAdmin={isAdmin}
         />
         <main className="main-content">
           <Routes>
@@ -357,6 +371,18 @@ function App() {
             <Route
               path="/register"
               element={<Register onRegister={handleRegister} />}
+            />
+            <Route
+              path="/admin/login"
+              element={<AdminLogin onLogin={handleLogin} />}
+            />
+            <Route
+              path="/admin/dashboard"
+              element={
+                <AdminRoute>
+                  <Dashboard />
+                </AdminRoute>
+              }
             />
           </Routes>
         </main>

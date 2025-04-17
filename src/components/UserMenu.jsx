@@ -45,18 +45,20 @@ const UserMenu = ({ user, onLogout }) => {
                 </div>
               </div>
               <div className="dropdown-divider"></div>
-              <Link to="/profile" className="dropdown-item" onClick={() => setIsOpen(false)}>
-                <span className="icon">👤</span> My Profile
-              </Link>
-              <Link to="/orders" className="dropdown-item" onClick={() => setIsOpen(false)}>
-                <span className="icon">📦</span> My Orders
-              </Link>
-              <Link to="/wishlist" className="dropdown-item" onClick={() => setIsOpen(false)}>
-                <span className="icon">❤️</span> Wishlist
-              </Link>
-              <Link to="/settings" className="dropdown-item" onClick={() => setIsOpen(false)}>
-                <span className="icon">⚙️</span> Settings
-              </Link>
+              <>
+                <Link to="/profile" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                  <span className="icon">👤</span> My Profile
+                </Link>
+                <Link to="/orders" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                  <span className="icon">📦</span> My Orders
+                </Link>
+                <Link to="/wishlist" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                  <span className="icon">❤️</span> Wishlist
+                </Link>
+                <Link to="/settings" className="dropdown-item" onClick={() => setIsOpen(false)}>
+                  <span className="icon">⚙️</span> Settings
+                </Link>
+              </>
               <div className="dropdown-divider"></div>
               <button className="dropdown-item logout" onClick={handleLogout}>
                 <span className="icon">🚪</span> Logout

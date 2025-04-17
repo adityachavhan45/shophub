@@ -16,7 +16,7 @@ const Footer = () => {
     <footer className="footer">
       <div className="footer-content">
         <div className="footer-section">
-          <h3>About ShopHub</h3>
+          <h3>About ShopCart</h3>
           <p>Your one-stop destination for all your shopping needs. We provide high-quality products at competitive prices.</p>
           <div className="social-links">
             <a href="#" className="social-link">
@@ -68,7 +68,7 @@ const Footer = () => {
       </div>
       
       <div className="footer-bottom">
-        <p>&copy; {new Date().getFullYear()} Design & Develop By Aditya Chavhan</p>
+        <p>&copy; {new Date().getFullYear()} Design & Develop By BCA Students</p>
         <div className="payment-methods">
           <span>💳 Visa</span>
           <span>💳 Mastercard</span>

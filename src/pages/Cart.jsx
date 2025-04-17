@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import cartService from '../services/cartService';
+import orderService from '../services/orderService';
 import './Cart.css';
 
 const Cart = ({ user, onUpdateCart }) => {
@@ -8,6 +9,7 @@ const Cart = ({ user, onUpdateCart }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
 
   const formatPrice = (price) => {
     const priceInRupees = price * 83;
@@ -16,16 +18,14 @@ const Cart = ({ user, onUpdateCart }) => {
 
   useEffect(() => {
     const fetchCart = async () => {
-      if (user) {
-        try {
-          const cart = await cartService.getCart(user.id);
-          setItems(cart.items || []);
-        } catch (err) {
-          setError('Failed to load cart items');
-          console.error('Error loading cart:', err);
-        } finally {
-          setLoading(false);
-        }
+      try {
+        const cart = user ? await cartService.getCart(user.id) : { items: [] };
+        setItems(cart.items || []);
+      } catch (err) {
+        setError('Failed to load cart items');
+        console.error('Error loading cart:', err);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -63,16 +63,50 @@ const Cart = ({ user, onUpdateCart }) => {
     }
   };
 
-  if (!user) {
-    return (
-      <div className="cart-container">
-        <h2>Please login to view your cart</h2>
-        <button className="primary-button" onClick={() => navigate('/login')}>
-          Login
-        </button>
-      </div>
-    );
-  }
+  // Ensure calculateTotal is defined before use
+  const calculateTotal = (items) =>
+    items.reduce((total, item) => total + item.price * item.quantity, 0);
+
+  const handleCheckout = async () => {
+    if (!user) {
+      navigate('/login');
+      return;
+    }
+
+    try {
+      setCheckoutLoading(true);
+      setError(null); // Clear any previous errors
+      
+      // Make sure we have the token
+      if (!user.token) {
+        console.error('Token missing in user object:', user);
+        throw new Error('Authentication required. Please log in again.');
+      }
+      
+      const totalAmount = calculateTotal(items);
+      await orderService.createOrder(items, totalAmount, user.token);
+      
+      // Clear the cart after successful order
+      await cartService.updateCart(user.id, []); 
+      setItems([]);
+      onUpdateCart && onUpdateCart({ items: [] });
+      
+      // Show success message
+      alert('Book Successful! Your order has been placed.');
+    } catch (err) {
+      console.error('Checkout error:', err);
+      
+      // Show specific error message to the user
+      const errorMessage = err.response?.data?.message || 
+                          err.message || 
+                          'Failed to process checkout. Please try again.';
+      
+      alert(`Error: ${errorMessage}`);
+      setError(errorMessage);
+    } finally {
+      setCheckoutLoading(false);
+    }
+  };
 
   if (loading) {
     return (
@@ -103,9 +137,6 @@ const Cart = ({ user, onUpdateCart }) => {
       </div>
     );
   }
-
-  const calculateTotal = (items) =>
-    items.reduce((total, item) => total + item.price * item.quantity, 0);
 
   return (
     <div className="cart-container">
@@ -150,7 +181,13 @@ const Cart = ({ user, onUpdateCart }) => {
             <span>Total:</span>
             <span>{formatPrice(calculateTotal(items))}</span>
           </div>
-          <button className="checkout-button">Proceed to Checkout</button>
+          <button 
+            className="checkout-button" 
+            onClick={handleCheckout}
+            disabled={checkoutLoading}
+          >
+            {checkoutLoading ? 'Processing...' : 'Proceed to Checkout'}
+          </button>
           <button className="continue-shopping" onClick={() => navigate('/')}>
             Continue Shopping
           </button>

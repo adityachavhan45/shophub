@@ -140,6 +140,16 @@
   opacity: 0.9;
 }
 
+.admin-badge {
+  display: inline-block;
+  background-color: #dc3545;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  margin-top: 4px;
+}
+
 @keyframes slideDown {
   from {
     opacity: 0;

@@ -16,7 +16,7 @@ const Navbar = ({ cartCount, onSearch, user, onLogout }) => {
   return (
     <nav className="navbar">
       <div className="navbar-brand">
-        <Link to="/" className="logo">Shophub</Link>
+        <Link to="/" className="logo">ShopCart</Link>
       </div>
 
       <form className="search-bar" onSubmit={handleSearch}>
@@ -32,17 +32,19 @@ const Navbar = ({ cartCount, onSearch, user, onLogout }) => {
 
       <div className="nav-links">
         <Link to="/" className="nav-link">Home</Link>
-        <Link to="/categories" className="nav-link">Categories</Link>
         <Link to="/cart" className="nav-link cart">
           <span className="cart-icon">🛒</span>
           {cartCount > 0 && <span className="cart-count">{cartCount}</span>}
         </Link>
 
-        {/* ✅ Show UserMenu if user is logged in */}
         {user ? (
-          <UserMenu user={user} onLogout={onLogout} />
+          <>
+            <UserMenu user={user} onLogout={onLogout} />
+          </>
         ) : (
-          <Link to="/login" className="nav-link">Login</Link>
+          <>
+            <Link to="/login" className="nav-link">Login</Link>
+          </>
         )}
       </div>
     </nav>
